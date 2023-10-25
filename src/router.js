@@ -49,4 +49,4 @@ function isAuthenticated() {
     return localStorage.getItem('token') !== null;
 }
 
-export default router;
+export {router as default   , isAuthenticated};

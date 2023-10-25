@@ -45,15 +45,19 @@ export default defineComponent({
     methods: {
         getData(){
             axios
-                .get('http://192.168.251.221:8081/trucks', {
+                .get(import.meta.env.VITE_API_URL+'trucks', {
                     headers: {
                         lat: 43.6091036,
                         lon: 3.8801855,
-                        rayon: 10
+                        rayon: 1000,
                     }
                 })
                 .then((response) => {
                     this.trucks = response.data
+                    console.log(response.data)
+                    console.log(import.meta.env.VITE_API_URL)
+                }).catch((error) => {
+                    console.log(error)
                 })
         },
         getColoredMarker(color) {

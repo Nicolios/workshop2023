@@ -1,11 +1,12 @@
 <script>
 import axios from 'axios';
-import router from '../router';
+import {isAuthenticated} from '../router';
 
 export default {
     name: 'MenuBar',
     mounted() {
         const url = import.meta.env.VITE_API_URL;
+        console.log(this.isAuthent())
     },
     methods: {
         logout() {
@@ -17,11 +18,8 @@ export default {
         },
 
         isAuthent() {
-            return router.isAuthenticated();
+            return isAuthenticated();
         }
-    },
-    components: {
-        router
     }
 }
 </script>
@@ -31,8 +29,8 @@ export default {
         <div class="container-fluid">
             <a class="navbar-brand" href="/admin">Souscription</a>
             <a class="navbar-brand" href="/maps">Carte interractive</a>
-            <a class="navbar-brand" href="/login" v-if="isAuthent">Connexion</a>
-            <a class="navbar-brand" @click="logout" v-else>Déconnexion</a>
+            <a class="navbar-brand" href="/login" v-if="!isAuthent()">Connexion</a>
+            <a class="navbar-brand" href="#" @click="logout" v-else>Déconnexion</a>
         </div>
     </nav>
 </template>
