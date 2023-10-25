@@ -31,7 +31,7 @@ export default {
             // console.log(recycl)
             // console.log(distanceParking)
             axios
-                .post('http://172.20.10.4:8081/trucks', {
+                .post('http://192.168.251.221:8081/trucks', {
                     name: name,
                     address: address,
                     avgNrjMachine: energyScore,
