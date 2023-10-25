@@ -1,44 +1,73 @@
 <script>
 import axios from "axios";
 
+import 'vue-toast-notification/dist/theme-sugar.css';
+import VueToast from 'vue-toast-notification';
+import router from "../router";
+
 export default {
     name: 'Login',
+
     methods: {
         login(){
-            const mail = document.getElementById('mail')
-            const password = document.getElementById('password')
+            const mail = document.getElementById('mail').value;
+            const password = document.getElementById('password').value;
             axios
-                .post('url', {
-                    mail: mail,
-                    password: password
-                })
+                .post(import.meta.env.VITE_API_URL+'users/authenticate', {
+                    email: mail,
+                    password: password,
+                })  
                 .then((response) => {
-                    console.log(response)
+                    localStorage.setItem('token', response.data.token);
+                    router.push('/maps')
                 })
                 .catch((error) => {
-                    console.error(error)
+                    console.error(error);
+                    this.$toast.error("Identifiant ou mot de passe incorrect");
                 })
         }
-    }
+    },
+    components:{
+        VueToast,
+    },
 }
 </script>
 
 <template>
-    <div>
+    <div class="body">
         <h1>Se connecter</h1>
-        <div class="login-form">
-            <input type="text" placeholder="Entrez votre mail" id="mail">
-            <input type="text" placeholder="Entrez votre mot de passe" id="password">
-            <button @click="login">Envoyer</button>
+        
+        <div class="form">
+            <div class="mb-3">
+                <label for="exampleFormControlInput1" class="form-label">Adresse Email</label>
+                <input type="email" class="form-control" id="mail" placeholder="name@example.com">
+            </div>
+
+            <div class="mb-3">
+                <label for="inputPassword" class="col-sm-2 col-form-label">Password</label>
+                <input type="password" class="form-control" id="password" placeholder="*****">
+            </div>
+
+            <button type="button" class="btn btn-primary" id="valid" @click="login">Connexion</button>
+            <vue-toast></vue-toast>
+
         </div>
     </div>
 </template>
 
 <style scoped>
-.login-form{
-    display: flex;
-    flex-direction: column;
-    width: 25%;
-    gap: 10px;
-}
+    .body{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+    }
+
+    .form {
+        display: flex;
+        max-width: 500px;
+        width: 100%;
+    }
+
+    
 </style>

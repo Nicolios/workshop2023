@@ -13,7 +13,8 @@ const routes = [
     {
         path: '/admin',
         name: 'admin',
-        component: Admin
+        component: Admin,
+        meta: {requiresAuth: true}
     },
     {
         path: '/login',
@@ -31,5 +32,21 @@ const router = createRouter({
     history: createWebHistory(),
     routes
 })
+
+router.beforeEach((to, from, next) => {
+    if(to.matched.some(route => route.meta.requiresAuth)) {
+        if(isAuthenticated()) {
+            next();
+        }else{
+            next("/login");
+        }
+    }else{
+        next();
+    }
+})
+
+function isAuthenticated() {
+    return localStorage.getItem('token') !== null;
+}
 
 export default router;

@@ -1,5 +1,11 @@
 <script>
 import axios from "axios";
+import "bootstrap/dist/css/bootstrap.min.css"
+import "bootstrap"
+
+import 'vue-toast-notification/dist/theme-sugar.css';
+import VueToast from 'vue-toast-notification';
+import router from "../router";
 
 export default {
     name: 'Admin',
@@ -17,9 +23,13 @@ export default {
             const energyScore = document.getElementById('energy-score').value
             const critAir = document.getElementById('critair').value
             const distanceProducts = document.getElementById('distance_products').value
-            const vege = document.querySelector('input[name="vege"]:checked') ? document.querySelector('input[name="vege"]:checked').value : null;
-            const togoodtogo = document.querySelector('input[name="togoodtogo"]:checked') ? document.querySelector('input[name="togoodtogo"]:checked').value : null;
-            const recycl = document.querySelector('input[name="recycl"]:checked') ? document.querySelector('input[name="recycl"]:checked').value : null;
+            const vege = document.getElementById('isvege').checked
+            const togoodtogo = document.getElementById('useTGTG').checked
+            const recycl = document.getElementById('userecycle').checked
+            const url = document.getElementById('url').value
+            // const vege = document.querySelector('input[name="vege"]:checked') ? document.querySelector('input[name="vege"]:checked').value : null;
+            // const togoodtogo = document.querySelector('input[name="togoodtogo"]:checked') ? document.querySelector('input[name="togoodtogo"]:checked').value : null;
+            // const recycl = document.querySelector('input[name="recycl"]:checked') ? document.querySelector('input[name="recycl"]:checked').value : null;
             // const distanceParking = document.getElementById('distance_parking_sell').value
             // console.log(name)
             // console.log(address)
@@ -30,97 +40,130 @@ export default {
             // console.log(togoodtogo)
             // console.log(recycl)
             // console.log(distanceParking)
+            const headers = {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                    };
             axios
-                .post('http://172.20.10.4:8081/trucks', {
+                .post(import.meta.env.VITE_API_URL+'trucks', {
                     name: name,
                     address: address,
                     avgNrjMachine: energyScore,
                     critair: critAir,
-                    offerVege: vege === 'yes_vege',
+                    offerVege: vege,
                     avgSupplierDistance: distanceProducts,
-                    useToGoodToGo: togoodtogo === 'yes_togoodtogo',
-                    useRecyclableUstensil: recycl === 'yes_recycl',
-                    ville: 'Montpellier',
-                    url: 'blabla.com'
-                })
+                    useToGoodToGo: togoodtogo,
+                    useRecyclableUstensil: recycl,
+                    url: url
+                }, {headers})
                 .then((response) => {
-                console.log(response)
-            })
+                    router.push('/maps')
+                })
                 .catch((error) => {
-                    console.error(error)
+                   this.$toast.error("Une erreur est survenue")
                 })
         }
-    }
-}
+    },
+    components: {
+        VueToast,
+    },
+};
 </script>
 
 <template>
-    <div>
+    <div class="body">
         <h1>Formulaire de création d'un foodtruck</h1>
         <div class="form">
-            <input id="name" type="text" placeholder="Nom du foodtruck" required>
-            <input id="address_autocomplete" type="text" placeholder="Adresse du foodtruck" required>
-            <input id="energy-score" type="text" placeholder="Score énergie machines utilisées">
-            <select name="critair" id="critair" required>
-                <option value="">Choisir un Crit'Air</option>
-                <option value="0">Électrique</option>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-            </select>
-            <input id="distance_products" type="number" placeholder="Distance provenance des produits">
-            <div>
-                <h1 style="font-size: 15px">Offre végé ?</h1>
-                <div class="option">
-                    <div class="option-radio">
-                        <input id="yes_vege" name="vege" type="radio" value="yes_vege">
-                        <label for="yes_vege">Oui</label>
-                    </div>
-                    <div class="option-radio">
-                        <input id="no_vege" name="vege" type="radio" value="no_vege">
-                        <label for="no_vege">Non</label>
-                    </div>
+            <div class="input-group mb-3">
+                <span class="input-group-text" id="inputGroup-sizing-default">Nom</span>
+                <input id="name" type="text" placeholder="Nom du food-truck" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
+            </div>
+
+            <div class="input-group mb-3">
+                <span class="input-group-text" id="inputGroup-sizing-default">Adresse</span>
+                <input id="address_autocomplete" placeholder="Selectionner une adresse" type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
+            </div>
+
+            <div class="input-group mb-3">
+                <label class="input-group-text" for="inputGroupSelect01">Score energie moyen</label>
+                <select class="form-select" id="energy-score">
+                    <option selected value="A">A</option>
+                    <option value="B">B</option>
+                    <option value="C">C</option>
+                    <option value="D">D</option>
+                    <option value="E">E</option>
+                </select>
+            </div>
+
+            <div class="input-group mb-3">
+                <label class="input-group-text" for="inputGroupSelect01">Crit'air du véhicule</label>
+                <select class="form-select" id="critair">
+                    <option value="0">Electrique</option>
+                    <option selected value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <div class="input-group">
+                    <span class="input-group-text" id="basic-addon3">Site internet</span>
+                    <input type="text" placeholder="https://www.mon-site-est-parfait.fr/" class="form-control" id="url" aria-describedby="basic-addon3 basic-addon4">
                 </div>
             </div>
-            <div>
-                <h1 style="font-size: 15px">Utilisateur toGoodToGo ?</h1>
-                <div class="option">
-                    <div class="option-radio">
-                        <input id="yes_togoodtogo" name="togoodtogo" type="radio" value="yes_togoodtogo">
-                        <label for="yes_togoodtogo">Oui</label>
-                    </div>
-                    <div class="option-radio">
-                        <input id="no_togoodtogo" name="togoodtogo" type="radio" value="no_togoodtogo">
-                        <label for="no_togoodtogo">Non</label>
-                    </div>
-                </div>
+
+            <div class="input-group mb-3">
+                <span class="input-group-text" id="inputGroup-sizing-default">Distance provenance des produits</span>
+                <input id="distance_products" type="number" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
             </div>
-            <div>
-                <h1 style="font-size: 15px">Ustensils recyclables ?</h1>
-                <div class="option">
-                    <div class="option-radio">
-                        <input id="yes_recycl" name="recycl" type="radio" value="yes_recycl">
-                        <label for="yes_recycl">Oui</label>
-                    </div>
-                    <div class="option-radio">
-                        <input id="no_recycl" name="recycl" type="radio" value="no_recycl">
-                        <label for="no_recycl">Non</label>
-                    </div>
-                </div>
+
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" role="switch" id="isvege" checked>
+                <label class="form-check-label" for="flexSwitchCheckChecked">Prosose une offre végétarienne</label>
             </div>
-            <input id="distance_parking_sell" type="number" placeholder="Distance lieu garage/vente">
-            <button @click="createFoodtruck">Envoyer</button>
+
+
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" role="switch" id="useTGTG" checked>
+                <label class="form-check-label" for="flexSwitchCheckChecked">Utilise toGoodToGo</label>
+            </div>
+
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" role="switch" id="userecycle" checked>
+                <label class="form-check-label" for="flexSwitchCheckChecked">Utilise des ustensils recyclables</label>
+            </div>
+
+        
+            <div class="input-group mb-3">
+                <span class="input-group-text" id="inputGroup-sizing-default">Distance lieu garage/vente</span>
+                <input id="distance_parking_sell" type="number" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
+            </div>
+            <button type="button" class="btn btn-primary" id="valid" @click="createFoodtruck">Valider</button>
+            <vue-toast></vue-toast>
         </div>
     </div>
 </template>
 
 <style>
+
+.body {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+body h1 {
+    margin-bottom: 35px;
+}
+
 .form {
     display: flex;
     flex-direction: column;
-    max-width: 260px;
+    max-width: 500px;
+    min-width: 250px;
+    width: 100%;
     gap: 10px;
 }
 .option{
@@ -129,5 +172,9 @@ export default {
 .option-radio{
     display: flex;
     align-items: flex-start;
+}
+
+#valid{
+    margin-bottom: 35px;
 }
 </style>
