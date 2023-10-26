@@ -1,8 +1,17 @@
 <template>
+<<<<<<< Updated upstream
     <h2>Trouver mon food-truck eco-responsable</h2>
     <div>
         <input type="range" id="distance" name="distance" min="0" max="100" />
         <label for="distance">Distance <span id="distanceValue">0</span></label>
+=======
+    <div style="margin-left: 20px">
+        <div class="d-flex gap-2">
+            <input id="pi_input" type="range" class="form-range" min="0" max="1000" step="1" />
+            <p>Rayon: <output id="value"></output></p>
+        </div>
+        <button @click="getData" class="btn btn-success">Rechercher</button>
+>>>>>>> Stashed changes
     </div>
     <div class="map">
         <GoogleMap api-key="AIzaSyDJb-W75KYY_qtHYpJiD9cEfEsLQikupZQ" style="height: 500px; width: 775px;" :center="center" :zoom="13" id="maps">
@@ -52,6 +61,12 @@ export default defineComponent({
     },
     mounted() {
         this.getData()
+        const value = document.querySelector("#value");
+        const input = document.querySelector("#pi_input");
+        value.textContent = input.value;
+        input.addEventListener("input", (event) => {
+            value.textContent = event.target.value;
+        });
     },
     setup() {
         const center = { lat: 43.6091036, lng: 3.8801855 };
@@ -65,7 +80,7 @@ export default defineComponent({
                     headers: {
                         lat: 43.6091036,
                         lon: 3.8801855,
-                        rayon: 1000,
+                        rayon: this.rayon,
                     }
                 })
                 .then((response) => {
@@ -91,18 +106,20 @@ export default defineComponent({
         }
     },
     computed: {
-        changeValue(){
-            const distanceInput = document.getElementById('distance');
-            const distanceValue = document.getElementById('distanceValue');
-
-            // Update the initial value
-            distanceValue.textContent = distanceInput.value;
-
-            // Attach event listener
-            distanceInput.addEventListener('input', function() {
-                distanceValue.textContent = this.value;
-            });
+        rayon(){
+            const input = document.querySelector("#pi_input");
+            return input.value;
         }
     }
 });
 </script>
+
+<style>
+.input-rayon{
+    display: flex;
+    gap: 10px;
+}
+.form-range{
+    max-width: 250px;
+}
+</style>
