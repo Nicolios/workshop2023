@@ -48,7 +48,7 @@ export default {
                 <input type="password" class="form-control" id="password" placeholder="*****">
             </div>
 
-            <button type="button" class="btn btn-primary" id="valid" @click="login">Connexion</button>
+            <button type="button" class="btn btn-primary bg-success" id="valid" @click="login">Connexion</button>
             <vue-toast></vue-toast>
 
         </div>

@@ -139,7 +139,7 @@ export default {
                 <span class="input-group-text" id="inputGroup-sizing-default">Distance lieu garage/vente</span>
                 <input id="distance_parking_sell" type="number" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
             </div>
-            <button type="button" class="btn btn-primary" id="valid" @click="createFoodtruck">Valider</button>
+            <button type="button" class="btn btn-primary bg-success" id="valid" @click="createFoodtruck">Valider</button>
             <vue-toast></vue-toast>
         </div>
     </div>
@@ -155,6 +155,7 @@ export default {
 }
 
 body h1 {
+    margin-top: 25px;
     margin-bottom: 35px;
 }
 

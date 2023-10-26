@@ -1,19 +1,35 @@
 <template>
+    <h2>Trouver mon food-truck eco-responsable</h2>
     <div>
         <input type="range" id="distance" name="distance" min="0" max="100" />
         <label for="distance">Distance <span id="distanceValue">0</span></label>
     </div>
-    <GoogleMap api-key="AIzaSyDJb-W75KYY_qtHYpJiD9cEfEsLQikupZQ" style="width: 1250px; height: 650px" :center="center" :zoom="13">
-    <Marker
-        v-for="(truck, index) in trucks"
-        :key="index"
-        :options="{
-            position: { lat: Number(truck.lat), lng: Number(truck.lon) },
-            icon: getColoredMarker(getColorByGrade(truck.note))
-        }"
-    />
-</GoogleMap>
+    <div class="map">
+        <GoogleMap api-key="AIzaSyDJb-W75KYY_qtHYpJiD9cEfEsLQikupZQ" style="height: 500px; width: 775px;" :center="center" :zoom="13" id="maps">
+            <Marker
+                v-for="(truck, index) in trucks"
+                :key="index"
+                :options="{
+                    position: { lat: Number(truck.lat), lng: Number(truck.lon) },
+                    icon: getColoredMarker(getColorByGrade(truck.note))
+                }"
+            />
+        </GoogleMap>
+    </div>
+    
 </template>
+
+<style>
+    h2{
+        margin-top: 25px !important;
+        text-align: center;
+    }
+    .map {
+        display: flex;
+        margin: 0% 5% 5% 5%;
+        justify-content: center;
+    }
+</style>
 
 <script>
 import { defineComponent } from "vue";
