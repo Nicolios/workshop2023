@@ -10,18 +10,32 @@
     </div>
     <div class="map">
         <GoogleMap api-key="AIzaSyDJb-W75KYY_qtHYpJiD9cEfEsLQikupZQ" style="height: 500px; width: 775px;" :center="{ lat: this.latitude, lng: this.longitude }" :zoom="10" id="maps">
+            
             <Marker
                 v-for="(truck, index) in trucks"
                 :key="index"
                 :options="{
                     position: { lat: Number(truck.lat), lng: Number(truck.lon) },
-                    icon: getColoredMarker(getColorByGrade(truck.note))
+                    icon: getColoredMarker(getColorByGrade(truck.note)),
+                    title: truck.note
                 }"
-            />
+                @click="showInfo(truck)"
+
+            >
+            <InfoWindow v-if="showInfoWindow" :position="selectedTruckPosition">
+                <div>
+                    <h3>{{ selectedTruck.name }} - {{ selectedTruck.note }}</h3>
+                    <a :href="selectedTruck.url">Site Web</a>
+                <!-- Autres détails du camion -->
+                </div>
+            </InfoWindow>
+            </Marker>
+            
             <Marker
             :options="{
                 position: { lat: this.latitude , lng: this.longitude }
             }"/>
+            
         </GoogleMap>
     </div>
     
@@ -41,11 +55,11 @@
 
 <script>
 import { defineComponent } from "vue";
-import { GoogleMap, Marker } from "vue3-google-map";
+import { GoogleMap, Marker, InfoWindow  } from "vue3-google-map";
 import axios from "axios";
 
 export default defineComponent({
-    components: { GoogleMap, Marker},
+    components: { GoogleMap, Marker, InfoWindow },
     data(){
         return {
             trucks: [],
@@ -60,6 +74,8 @@ export default defineComponent({
             latitude: null,
             longitude: null,
             error: null,
+            showInfoWindow: false, // Pour afficher ou masquer l'info-bulle
+            selectedTruck: null,
         }
     },
     async mounted() {
@@ -73,6 +89,11 @@ export default defineComponent({
         }
     },
     methods: {
+        showInfo(truck) {
+            console.log(truck)
+            this.selectedTruck = truck;
+            this.showInfoWindow = true;
+        },
         getData(){
             axios
                 .get(import.meta.env.VITE_API_URL+'trucks', {
@@ -129,7 +150,13 @@ export default defineComponent({
         rayon(){
             const input = document.querySelector("#pi_input");
             return input.value;
-        }
+        },
+        selectedTruckPosition() {
+            if (this.selectedTruck) {
+            return { lat: Number(this.selectedTruck.lat), lng: Number(this.selectedTruck.lon) };
+            }
+            return { lat: 0, lng: 0 }; // Une position par défaut si aucun camion n'est sélectionné
+        },
     }
 
 });
