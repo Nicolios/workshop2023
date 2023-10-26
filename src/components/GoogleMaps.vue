@@ -1,17 +1,14 @@
 <template>
-<<<<<<< Updated upstream
     <h2>Trouver mon food-truck eco-responsable</h2>
     <div>
         <input type="range" id="distance" name="distance" min="0" max="100" />
         <label for="distance">Distance <span id="distanceValue">0</span></label>
-=======
     <div style="margin-left: 20px">
         <div class="d-flex gap-2">
             <input id="pi_input" type="range" class="form-range" min="0" max="1000" step="1" />
             <p>Rayon: <output id="value"></output></p>
         </div>
         <button @click="getData" class="btn btn-success">Rechercher</button>
->>>>>>> Stashed changes
     </div>
     <div class="map">
         <GoogleMap api-key="AIzaSyDJb-W75KYY_qtHYpJiD9cEfEsLQikupZQ" style="height: 500px; width: 775px;" :center="center" :zoom="13" id="maps">
