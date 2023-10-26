@@ -27,10 +27,15 @@ export default {
 <template>
     <nav class="navbar navbar-expand-lg bg-secondary">
         <div class="container-fluid">
-            <a class="navbar-brand" href="/admin">Souscription</a>
-            <a class="navbar-brand" href="/maps">Carte interractive</a>
-            <a class="navbar-brand" href="/login" v-if="!isAuthent()">Connexion</a>
-            <a class="navbar-brand" href="#" @click="logout" v-else>Déconnexion</a>
+            <div>
+                <a class="navbar-brand" href="/admin">
+                    <img src="../assets/LogoFoodFinder.png" alt="Logo" width="80" height="60" class="d-inline-block align-text-center">Souscription</a>
+                <a class="navbar-brand" href="/maps">Carte interractive</a>
+            </div>
+            <div>
+                <a class="navbar-brand" href="/login" v-if="!isAuthent()">Connexion</a>
+                <a class="navbar-brand" href="#" @click="logout" v-else>Déconnexion</a>
+            </div>
         </div>
     </nav>
 </template>
@@ -39,5 +44,14 @@ export default {
 <style>
     nav {
         margin-bottom: 35px;
+        height: auto;
+    }
+
+    a{
+        margin-right: 20px;
+    }
+
+    img {
+        margin-right: 20px;
     }
 </style>
