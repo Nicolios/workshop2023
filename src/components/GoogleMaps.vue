@@ -1,17 +1,15 @@
 <template>
     <h2>Trouver mon food-truck eco-responsable</h2>
     <div>
-        <input type="range" id="distance" name="distance" min="0" max="100" />
-        <label for="distance">Distance <span id="distanceValue">0</span></label>
-    <div style="margin-left: 20px">
-        <div class="d-flex gap-2">
-            <input id="pi_input" type="range" class="form-range" min="0" max="1000" step="1" />
-            <p>Rayon: <output id="value"></output></p>
+        <div class="d-flex gap-2 map">
+            <p>Rayon: {{ rayon }}<output id="value"></output></p>
+            <input id="pi_input" type="range" class="form-range" min="0" max="1000" step="1" v-model="rayon"/>
+            <button @click="getData" class="btn btn-success">Rechercher</button>
         </div>
-        <button @click="getData" class="btn btn-success">Rechercher</button>
+        
     </div>
     <div class="map">
-        <GoogleMap api-key="AIzaSyDJb-W75KYY_qtHYpJiD9cEfEsLQikupZQ" style="height: 500px; width: 775px;" :center="center" :zoom="13" id="maps">
+        <GoogleMap api-key="AIzaSyDJb-W75KYY_qtHYpJiD9cEfEsLQikupZQ" style="height: 500px; width: 775px;" :center="{ lat: this.latitude, lng: this.longitude }" :zoom="10" id="maps">
             <Marker
                 v-for="(truck, index) in trucks"
                 :key="index"
@@ -20,6 +18,10 @@
                     icon: getColoredMarker(getColorByGrade(truck.note))
                 }"
             />
+            <Marker
+            :options="{
+                position: { lat: this.latitude , lng: this.longitude }
+            }"/>
         </GoogleMap>
     </div>
     
@@ -27,7 +29,7 @@
 
 <style>
     h2{
-        margin-top: 25px !important;
+        margin: 5% !important;
         text-align: center;
     }
     .map {
@@ -43,7 +45,7 @@ import { GoogleMap, Marker } from "vue3-google-map";
 import axios from "axios";
 
 export default defineComponent({
-    components: { GoogleMap, Marker },
+    components: { GoogleMap, Marker},
     data(){
         return {
             trucks: [],
@@ -53,40 +55,39 @@ export default defineComponent({
                 'C': '#FFFF00',
                 'D': '#FFA500',
                 'E': '#FF0000'
-            }
+            },
+            rayon: 50,
+            latitude: null,
+            longitude: null,
+            error: null,
         }
     },
-    mounted() {
-        this.getData()
-        const value = document.querySelector("#value");
-        const input = document.querySelector("#pi_input");
-        value.textContent = input.value;
-        input.addEventListener("input", (event) => {
-            value.textContent = event.target.value;
-        });
-    },
-    setup() {
-        const center = { lat: 43.6091036, lng: 3.8801855 };
-
-        return { center };
+    async mounted() {
+        try {
+            const coordinates = await this.getLocation();
+            this.latitude = coordinates.latitude;
+            this.longitude = coordinates.longitude;
+            this.getData();
+        } catch (error) {
+            console.error(error);
+        }
     },
     methods: {
         getData(){
             axios
                 .get(import.meta.env.VITE_API_URL+'trucks', {
-                    headers: {
-                        lat: 43.6091036,
-                        lon: 3.8801855,
+                    headers: { 
+                        lat: this.latitude,
+                        lon: this.longitude,
                         rayon: this.rayon,
                     }
                 })
                 .then((response) => {
                     this.trucks = response.data
-                    console.log(response.data)
-                    console.log(import.meta.env.VITE_API_URL)
                 }).catch((error) => {
                     console.log(error)
                 })
+                
         },
         getColoredMarker(color) {
             return {
@@ -100,7 +101,29 @@ export default defineComponent({
         },
         getColorByGrade(grade) {
             return this.gradeColors[grade] || '#000000'; // Default to black if grade is not found
-        }
+        },
+        
+        getLocation() {
+            return new Promise((resolve, reject) => {
+                if ('geolocation' in navigator) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                    this.latitude = position.coords.latitude;
+                    this.longitude = position.coords.longitude;
+                    resolve({ latitude: this.latitude, longitude: this.longitude });
+                    },
+                    (error) => {
+                    this.error = `Erreur de géolocalisation : ${error.message}`;
+                    reject(error);
+                    }
+                );
+                } else {
+                this.error = "La géolocalisation n'est pas prise en charge par ce navigateur.";
+                reject("Géolocalisation non prise en charge.");
+                }
+            });
+        },
+
     },
     computed: {
         rayon(){
@@ -108,6 +131,7 @@ export default defineComponent({
             return input.value;
         }
     }
+
 });
 </script>
 

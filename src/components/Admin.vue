@@ -27,19 +27,6 @@ export default {
             const togoodtogo = document.getElementById('useTGTG').checked
             const recycl = document.getElementById('userecycle').checked
             const url = document.getElementById('url').value
-            // const vege = document.querySelector('input[name="vege"]:checked') ? document.querySelector('input[name="vege"]:checked').value : null;
-            // const togoodtogo = document.querySelector('input[name="togoodtogo"]:checked') ? document.querySelector('input[name="togoodtogo"]:checked').value : null;
-            // const recycl = document.querySelector('input[name="recycl"]:checked') ? document.querySelector('input[name="recycl"]:checked').value : null;
-            // const distanceParking = document.getElementById('distance_parking_sell').value
-            // console.log(name)
-            // console.log(address)
-            // console.log(energyScore)
-            // console.log(critAir)
-            // console.log(distanceProducts)
-            // console.log(vege)
-            // console.log(togoodtogo)
-            // console.log(recycl)
-            // console.log(distanceParking)
             const headers = {
                         'Authorization': `Bearer ${localStorage.getItem('token')}`,
                     };
