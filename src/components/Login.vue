@@ -19,7 +19,9 @@ export default {
                 })  
                 .then((response) => {
                     localStorage.setItem('token', response.data.token);
+                    this.$store.commit('setAuthentication', true);
                     router.push('/maps')
+                    this.$toast.info("Connexion réussie")
                 })
                 .catch((error) => {
                     console.error(error);

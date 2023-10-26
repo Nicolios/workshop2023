@@ -1,30 +1,32 @@
 <script>
 import axios from 'axios';
 import router from '../router';
+import store from '../store';
+
+import 'vue-toast-notification/dist/theme-sugar.css';
+import VueToast from 'vue-toast-notification';
 
 export default {
     name: 'MenuBar',
-    data(){
-        return {
-            isAuthent: false
-        }
-    },
     mounted() {
         const url = import.meta.env.VITE_API_URL;
-        this.isAuthent = localStorage.getItem('token') !== null
     },
     methods: {
         logout() {
             localStorage.clear()
-            this.isAuthent = false
+            this.$store.commit('setAuthentication', false);
+            this.$toast.info("Déconnexion réussie")
             router.push('/maps')
         },
     },
     computed: {
         isLoggedIn() {
-            this.isAuthent = localStorage.getItem('token') !== null
+            return this.$store.state.isAuthenticated;
         }
-    }
+    },
+    components:{
+        VueToast,
+    },
 }
 </script>
 
@@ -41,10 +43,12 @@ export default {
         </li>
 
         <li class="nav-item">
-            <router-link class="nav-link link-dark" to="/login" v-if="!isAuthent">Connexion</router-link>
+            <router-link class="nav-link link-dark" to="/login" v-if="!isLoggedIn">Connexion</router-link>
             <a class="nav-link link-dark" href="#" @click="logout" v-else>Déconnexion</a>
         </li>
     </ul>
+
+    <vue-toast></vue-toast>
 </template>
 
 
