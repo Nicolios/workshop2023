@@ -32,7 +32,7 @@ export default {
 
 <template>
     <ul class="nav nav-underline bg-success">
-            <img src="../assets/LogoFoodFinder.png" alt="Logo" width="80" height="60" class="d-inline-block align-text-center">
+            <img src="../assets/LogoFoodFinder.png" alt="Logo" width="80" height="60" class="d-inline-block align-text-center" id="logo">
         <li class="nav-item">
             <router-link class="nav-link link-light" to="/admin">
                     Souscription
@@ -67,5 +67,10 @@ export default {
 
     img {
         margin: 20px;
+    }
+
+    #logo {
+        border-radius: 50%;
+        border: 3px solid #fff;
     }
 </style>

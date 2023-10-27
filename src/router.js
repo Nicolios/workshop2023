@@ -6,6 +6,10 @@ import Client from "@/components/Client.vue";
 
 const routes = [
     {
+        path: '/',
+        redirect: '/maps'
+    },
+    {
         path: '/maps',
         name: 'googleMaps',
         component: GoogleMaps

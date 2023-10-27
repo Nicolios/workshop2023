@@ -1,15 +1,24 @@
 <template>
-    <h2>Trouver mon food-truck eco-responsable</h2>
-    <div>
-        <div class="d-flex gap-2 map">
-            <p>Rayon: {{ rayon }}<output id="value"></output></p>
-            <input id="pi_input" type="range" class="form-range" min="0" max="1000" step="1" v-model="rayon"/>
-            <button @click="getData" class="btn btn-success">Rechercher</button>
-        </div>
-        
+        <div class="container">
+    <div class="text-center">
+      <h1>Trouver mon food-truck eco-responsable</h1>
+    </div>
+    <div class="research">
+      <div class="d-flex gap-2 map">
+        <p class="span">Mon périmètre de recherche : {{ rayon }} kms<output id="value"></output></p>
+        <input id="pi_input" type="range" class="form-range" min="0" max="40" step="1" v-model="rayon" />
+        <button @click="getData" class="btn btn-success">Rechercher</button>
+      </div>
     </div>
     <div class="map">
-        <GoogleMap api-key="AIzaSyDJb-W75KYY_qtHYpJiD9cEfEsLQikupZQ" style="height: 500px; width: 775px;" :center="{ lat: this.latitude, lng: this.longitude }" :zoom="10" id="maps">
+      <GoogleMap
+        api-key="AIzaSyDJb-W75KYY_qtHYpJiD9cEfEsLQikupZQ"
+        style="height: 500px; width: 775px;"
+        :center="{ lat: this.latitude, lng: this.longitude }"
+        :zoom="calculateZoom()"
+        id="maps"
+      >
+            
             
             <Marker
                 v-for="(truck, index) in trucks"
@@ -35,31 +44,76 @@
             :options="{
                 position: { lat: this.latitude , lng: this.longitude }
             }"/>
-            
+
+            <Circle :options="{
+                center: { lat: this.latitude, lng: this.longitude },
+                radius: this.rayon * 1000,
+                strokeOpacity: 0.3,
+                strokeWeight: 2,
+                }" 
+            />
         </GoogleMap>
+        </div>
     </div>
     
 </template>
 
 <style>
-    h2{
-        margin: 5% !important;
-        text-align: center;
-    }
-    .map {
-        display: flex;
-        margin: 0% 5% 5% 5%;
-        justify-content: center;
-    }
+   body::before {
+    content: "";
+    background-image: url('../assets/LogoFoodFinder.png');
+    background-size: cover;
+    background-attachment: fixed;
+    background-position: center center;
+    background-repeat: no-repeat;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.1;
+    z-index: -1;
+  }
+
+  h1 {
+    margin-top: 5% !important;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.7);
+    padding: 10px;
+    border-radius: 10px;
+    display: inline-block;
+  }
+
+  .map {
+    background: rgba(255, 255, 255, 0.7);
+    padding: 20px;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center; /* Centrer horizontalement */
+    align-items: center; /* Centrer verticalement */
+  }
+
+  .span {
+    font-style: italic;
+    font-weight: bold;
+    background: rgba(255, 255, 255, 0.7);
+    padding: 5px;
+    border-radius: 5px;
+  }
+
+  .form-range {
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 5px;
+  }
 </style>
 
 <script>
 import { defineComponent } from "vue";
-import { GoogleMap, Marker, InfoWindow  } from "vue3-google-map";
+import { GoogleMap, Marker, InfoWindow, Circle  } from "vue3-google-map";
 import axios from "axios";
 
 export default defineComponent({
-    components: { GoogleMap, Marker, InfoWindow },
+    components: { GoogleMap, Marker, InfoWindow, Circle },
     data(){
         return {
             trucks: [],
@@ -70,7 +124,7 @@ export default defineComponent({
                 'D': '#FFA500',
                 'E': '#FF0000'
             },
-            rayon: 50,
+            rayon: 10,
             latitude: null,
             longitude: null,
             error: null,
@@ -89,6 +143,9 @@ export default defineComponent({
         }
     },
     methods: {
+        calculateZoom() {
+            return Math.floor(13 - Math.log2(this.rayon / 100) / 4) / 1.1;
+        },
         showInfo(truck) {
             console.log(truck)
             this.selectedTruck = truck;
@@ -151,6 +208,9 @@ export default defineComponent({
             const input = document.querySelector("#pi_input");
             return input.value;
         },
+        zoom() {
+            this.calculateZoom()
+        },
         selectedTruckPosition() {
             if (this.selectedTruck) {
             return { lat: Number(this.selectedTruck.lat), lng: Number(this.selectedTruck.lon) };
@@ -161,13 +221,3 @@ export default defineComponent({
 
 });
 </script>
-
-<style>
-.input-rayon{
-    display: flex;
-    gap: 10px;
-}
-.form-range{
-    max-width: 250px;
-}
-</style>
